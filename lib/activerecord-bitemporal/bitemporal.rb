@@ -268,6 +268,22 @@ module ActiveRecord
 
     # create, update, destroy に処理をフックする
     module Persistence
+      module FixValidDatetimeCallback
+        extend ActiveSupport::Concern
+
+        included do
+          around_save :around_fix_valid_datetime
+
+          private
+
+          def around_fix_valid_datetime(*)
+            target_datetime = valid_datetime || Time.current
+            target_datetime = valid_from if valid_from_changed? && valid_from != ActiveRecord::Bitemporal::DEFAULT_VALID_FROM
+            ActiveRecord::Bitemporal.valid_at(target_datetime) { yield }
+          end
+        end
+      end
+
       module PersistenceOptionable
         include Optionable
 
@@ -339,9 +355,9 @@ module ActiveRecord
         # アソシエーションの子に対して `valid_from` を設定
         # MEMO: cache が存在しない場合、 public_send(reflection.name) のタイミングで新しくアソシエーションオブジェクトが生成されるが
         # この時に何故か生成できずに落ちるケースがあるので cache しているアソシエーションに対してのみイテレーションする
-        each_association(deep: true, only_cached: true)
-          .select { |asso| asso.class.bi_temporal_model? && asso.valid_from == ActiveRecord::Bitemporal::DEFAULT_VALID_FROM && asso.new_record? }
-          .each   { |asso| asso.valid_from = self.valid_from }
+#         each_association(deep: true, only_cached: true)
+#           .select { |asso| asso.class.bi_temporal_model? && asso.valid_from == ActiveRecord::Bitemporal::DEFAULT_VALID_FROM && asso.new_record? }
+#           .each   { |asso| asso.valid_from = self.valid_from }
         super()
       end
 

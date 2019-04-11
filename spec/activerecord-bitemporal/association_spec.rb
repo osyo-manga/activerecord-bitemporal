@@ -211,11 +211,7 @@ RSpec.describe "Association" do
 
     describe "nested_attributes" do
       context "with accepts_nested_attributes_for" do
-        let(:company) {
-          Class.new(CompanyWithoutBitemporal) {
-            accepts_nested_attributes_for :employees
-          }.create(name: "Company")
-        }
+        let(:company) { CompanyWithoutBitemporal.create(name: "Company") }
         let!(:employee1) { company.employees.create(name: "Jane").tap { |m| m.update(name: "Tom") } }
         let!(:employee2) { company.employees.create(name: "Homu").tap { |m| m.update(name: "Mami") } }
 
@@ -258,11 +254,7 @@ RSpec.describe "Association" do
   describe "BTDM has many BTDM" do
     describe "nested_attributes" do
       context "with accepts_nested_attributes_for" do
-        let(:company) {
-          Class.new(Company) {
-            accepts_nested_attributes_for :employees
-          }.create(name: "Company")
-        }
+        let(:company) { Company.create(name: "Company") }
         let!(:employee1) { company.employees.create(name: "Jane").tap { |m| m.update(name: "Tom") } }
         let!(:employee2) { company.employees.create(name: "Homu").tap { |m| m.update(name: "Mami") } }
 

@@ -71,11 +71,13 @@ class Company < ActiveRecord::Base
 
   has_many :employees, foreign_key: :company_id
   has_many :employee_without_bitemporals, foreign_key: :company_id
+  accepts_nested_attributes_for :employees
 end
 
 class CompanyWithoutBitemporal < ActiveRecord::Base
   has_many :employees, foreign_key: :company_id
   has_many :employee_without_bitemporals, foreign_key: :company_id
+  accepts_nested_attributes_for :employees
 end
 
 
@@ -87,6 +89,8 @@ class Employee < ActiveRecord::Base
 
   has_one  :address,   foreign_key: :employee_id
   has_one  :address_without_bitemporal,  foreign_key: :employee_id
+
+  accepts_nested_attributes_for :address
 
   class <<self
     attr_accessor :call_after_save_count
