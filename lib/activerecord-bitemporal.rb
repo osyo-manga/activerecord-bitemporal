@@ -82,6 +82,7 @@ module ActiveRecord::Bitemporal::Bitemporalize
     extend ClassMethods
     include InstanceMethods
     include ActiveRecord::Bitemporal::Scope
+    include ActiveRecord::Bitemporal::Persistence::FixValidDatetimeCallback
 
     after_create do
       # MEMO: #update_columns is not call #_update_row (and validations, callbacks)
