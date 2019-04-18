@@ -371,7 +371,7 @@ module ActiveRecord
             # 有効なレコードは論理削除する
             current_valid_record.update_columns(deleted_at: Time.current)
             # 以降の履歴データはそのまま保存
-            after_instance.save!(validate: false)
+            after_instance.save!
 
           # 有効なレコードがある場合
           elsif current_valid_record.present?
@@ -380,12 +380,11 @@ module ActiveRecord
 
             # 以前の履歴データは valid_to を詰めて保存
             before_instance.valid_to = target_datetime
-            before_instance.save!(validate: false)
+            before_instance.save!
 
-            # 以降の履歴データは valid_from と valid_to を調整して保存する
-            after_instance.valid_from = target_datetime
-            after_instance.valid_to = current_valid_record.valid_to
-            after_instance.save!(validate: false)
+            # 以降の履歴データは valid_from を詰めて保存
+            after_instance.valid_from = before_instance.valid_to
+            after_instance.save!
 
           # 有効なレコードがない場合
           else
@@ -395,7 +394,7 @@ module ActiveRecord
             # valid_from と valid_to を調整して保存する
             after_instance.valid_from = target_datetime
             after_instance.valid_to = nearest_instance.valid_from
-            after_instance.save!(validate: false)
+            after_instance.save!
           end
           # update 後に新しく生成したインスタンスのデータを移行する
           @_swapped_id = after_instance.swapped_id
@@ -418,7 +417,7 @@ module ActiveRecord
 
             # 削除時の状態を履歴レコードとして保存する
             duplicated_instance.valid_to = target_datetime
-            duplicated_instance.save!(validate: false)
+            duplicated_instance.save!
           }
           raise ActiveRecord::Rollback unless @destroyed
 

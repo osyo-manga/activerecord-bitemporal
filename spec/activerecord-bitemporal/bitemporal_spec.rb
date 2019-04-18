@@ -618,18 +618,6 @@ RSpec.describe ActiveRecord::Bitemporal do
           let(:valid_to) { finish }
         end
       end
-
-      context "any updated" do
-        let(:now) { from }
-        it do
-          expect { employee.update(name: "Tom") }.to change(employee, :swapped_id)
-            .and(change(employee, :name).from("Jone").to("Tom"))
-          expect { employee.update(name: "Mami") }.to change(employee, :swapped_id)
-            .and(change(employee, :name).from("Tom").to("Mami"))
-          expect { employee.update(name: "Mado") }.to change(employee, :swapped_id)
-            .and(change(employee, :name).from("Mami").to("Mado"))
-        end
-      end
     end
 
     context "wrapper method with the same name as the column name" do
@@ -926,12 +914,11 @@ RSpec.describe ActiveRecord::Bitemporal do
   end
 
   describe "#touch" do
-    let(:employee) { Employee.create(name: "Jane").tap { |it| it.update(name: "Tom") } }
-    subject { -> { employee.touch(:archived_at) } }
-    around { |e| Timecop.freeze(time_current) { e.run } }
+    let!(:employee) { Employee.create(name: "Jane").tap { |it| it.update(name: "Tom") } }
+    subject { -> { Timecop.freeze(time_current + 1.days) { employee.touch(:archived_at) } } }
 
     it { expect(subject.call).to eq true }
-    it { is_expected.to change { employee.reload.archived_at }.from(nil).to(time_current) }
+    it { is_expected.to change { employee.archived_at }.from(nil).to(time_current + 1.days) }
   end
 
   describe "validation" do

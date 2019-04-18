@@ -161,7 +161,8 @@ RSpec.describe "Relation" do
       Timecop.freeze("2019/1/1") do
         @company = Company.create(name: "Company1")
         @company.employees.create(name: "Employee1")
-        @company.employees.first.address = Address.create(name: "Address1")
+        Address.create(name: "Address1", employee_id: @company.employees.first.id)
+#         @company.employees.first.address = Address.create(name: "Address1")
       end
 
       Timecop.freeze("2019/1/10") do
