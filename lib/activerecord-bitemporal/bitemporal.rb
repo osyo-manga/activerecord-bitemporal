@@ -294,7 +294,8 @@ module ActiveRecord
         refine Persistence do
           def build_new_instance
             self.class.new.tap { |it|
-              (self.class.column_names - %w(id type created_at updated_at) - bitemporal_ignore_update_columns.map(&:to_s)).each { |name|
+              (self.class.column_names - %w(id type created_at) - bitemporal_ignore_update_columns.map(&:to_s)).each { |name|
+#               (self.class.column_names - %w(id type created_at updated_at) - bitemporal_ignore_update_columns.map(&:to_s)).each { |name|
                 # 生のattributesの値でなく、ラッパーメソッド等を考慮してpublic_send(name)する
                 it.public_send("#{name}=", public_send(name))
               }

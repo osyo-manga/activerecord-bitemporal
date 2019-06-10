@@ -751,6 +751,12 @@ RSpec.describe ActiveRecord::Bitemporal do
         end
       end
     end
+
+    context "with `updated_at`" do
+      let(:company) { Company.create }
+      subject { -> { company.update!(updated_at: "2019/1/1".to_time) } }
+      it { is_expected.to change { company.reload.updated_at }.to("2019/1/1".to_time) }
+    end
   end
 
   describe "#force_update" do
