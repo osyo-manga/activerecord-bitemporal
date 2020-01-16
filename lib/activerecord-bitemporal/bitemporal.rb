@@ -323,6 +323,7 @@ module ActiveRecord
           @new_record = false
           # NOTE: Hook to copying swapped_id
           @_swapped_id = fresh_object.swapped_id
+          bitemporal_option_storage[:relation_valid_datetime] = fresh_object.relation_valid_datetime
           self
         end
       end
