@@ -55,14 +55,14 @@ module ActiveRecord::Bitemporal::Bitemporalize
     end
 
   private
-    # def load_schema!
-    #   super
+    def load_schema!
+      super
 
-    #   DEFAULT_ATTRIBUTES.each do |name, default_value|
-    #     type = type_for_attribute(name)
-    #     define_attribute(name.to_s, type, default: default_value)
-    #   end
-    # end
+      DEFAULT_ATTRIBUTES.each do |name, default_value|
+        type = type_for_attribute(name)
+        define_attribute(name.to_s, type, default: default_value)
+      end
+    end
   end
 
   module InstanceMethods
@@ -119,11 +119,6 @@ module ActiveRecord::Bitemporal::Bitemporalize
     after_find do
       self.swap_id! if self.send(bitemporal_id_key).present?
     end
-    
-    attribute :valid_from, :datetime, default: -> { ActiveRecord::Bitemporal::DEFAULT_VALID_FROM }
-    attribute :valid_to, :datetime, default: -> { ActiveRecord::Bitemporal::DEFAULT_VALID_TO }
-    attribute :transaction_from, :datetime, default: -> { ActiveRecord::Bitemporal::DEFAULT_TRANSACTION_FROM }
-    attribute :transaction_to, :datetime, default: -> { ActiveRecord::Bitemporal::DEFAULT_TRANSACTION_TO }
 
     # Callback hook to `validates :xxx, uniqueness: true`
     const_set(:UniquenessValidator, Class.new(ActiveRecord::Validations::UniquenessValidator) {
