@@ -320,11 +320,13 @@ module ActiveRecord
           self.class.connection.clear_query_cache
 
           fresh_object =
-            if options && options[:lock]
-              self.class.unscoped { self.class.lock(options[:lock]).bitemporal_default_scope.find(id) }
-            else
-              self.class.unscoped { self.class.bitemporal_default_scope.find(id) }
-            end
+            ActiveRecord::Bitemporal.with_bitemporal_option(**bitemporal_option) {
+              if options && options[:lock]
+                self.class.unscoped { self.class.lock(options[:lock]).bitemporal_default_scope.find(id) }
+              else
+                self.class.unscoped { self.class.bitemporal_default_scope.find(id) }
+              end
+            }
 
           @attributes = fresh_object.instance_variable_get("@attributes")
           @new_record = false
