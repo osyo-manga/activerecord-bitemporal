@@ -332,11 +332,6 @@ module ActiveRecord
           @new_record = false
           # NOTE: Hook to copying swapped_id
           @_swapped_id = fresh_object.swapped_id
-          if fresh_object.valid_datetime
-            bitemporal_option_storage[:valid_datetime] = fresh_object.valid_datetime
-          else
-            bitemporal_option_storage.delete(:valid_datetime)
-          end
           self
         end
       end
